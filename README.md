@@ -1,5 +1,8 @@
 # Clinical prediction system of complications among COVID-19 patients: a development and validation retrospective multicentre study
 
+[![DOI](https://zenodo.org/badge/313361127.svg)](https://zenodo.org/badge/latestdoi/313361127)
+
+
 Table of contents
 =================
 
