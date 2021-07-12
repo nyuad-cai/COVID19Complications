@@ -12,7 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 def get_results(framework_test, complications, models_all, train_columns):
     """This function applies the system on all the complications,
-    returns the predictions and the performance on the test sets
+    returns the predictions and the performance on the test sets 
     """
 
     upper_bounds_auc = []
@@ -30,7 +30,7 @@ def get_results(framework_test, complications, models_all, train_columns):
         test = framework_test[i]
 
         model_chosen = models_all[i]
-
+        
         if type(model_chosen[0]) == LogisticRegression:
             test = test.fillna(test.median())
         elif type(model_chosen[0].base_estimator) != LGBMClassifier:
@@ -60,9 +60,9 @@ def get_results(framework_test, complications, models_all, train_columns):
 
 def predict_with_bootstraps(test, outcome, models, train_columns):
 
-    """
-    The function below calculates the avarage predictions of the 6 models per complication
-    then gets boostraps with 1000 iterations to calculate the 95% confidence Intervals.
+    """ 
+    The function below calculates the avarage predictions of the 6 models per complication 
+    then gets boostraps with 1000 iterations to calculate the 95% confidence Intervals. 
     """
     n_iterations = 1000
     Test_AUC=[]
@@ -133,6 +133,61 @@ def apply_system(outcome, test, selected_models, train_columns):
     return(auc_true, AUPRC_true, prediction, upperAUC, lowerAUC, upperAUPRC, lowerAUPRC)
 
 
+def display_top_features(feat, complication):
+    for i in range(len(feat)):
+        print(f"complication: {complication} \n ------ \n Top 4 predictive features: {feat[i]} \n ----------------")
+        
+
+def get_feature_importances(models, test_data, complication, train_columns):
+    """ This function calculates the shap values of the top models for each of the investigated complication"""
+   
+    tree_explain = [LGBMClassifier]
+
+    features = []
+    avg_shap_values = []
+
+    test_data_i=  test_data[complication]
+    importance_dfs={}
+    counter =0
+
+    for x in models[complication]:
+        # Get feature importances
+        X_importance = test_data_i[train_columns]
+        if (type(x) in tree_explain):
+            explainer =  shap.TreeExplainer(x)
+            shap_values = explainer.shap_values(X_importance,check_additivity=False)
+
+        else:
+            model_results = x.predict_proba
+            X_importance = X_importance.fillna(X_importance.median())
+            X_importance_= shap.sample(X_importance, 50)
+            explainer = shap.KernelExplainer(model_results,X_importance_)
+            shap_values = explainer.shap_values(X_importance_,check_additivity=False)[0]
+        values= np.abs(shap_values).mean(0)
+
+        importance_df = pd.DataFrame()
+        importance_df['column_name']= train_columns
+        importance_df["importance"]= values
+        importance_df= importance_df.sort_values('column_name')
+        importance_dfs[counter] = importance_df
+        counter = counter+1
+
+
+    importance_df = pd.DataFrame([X_importance.columns.tolist()]).T
+    importance_df.columns = ['column_name']
+    for x in range(6):
+        importance_df[f"importance_{str(x)}"] =importance_dfs[x]["importance"]
+
+    col = importance_df.loc[: , "importance_0":"importance_6"]
+
+    importance_df["avg"] = col.mean(axis=1)
+
+    features.append(importance_df.sort_values(by="avg", ascending=False).column_name[:4].values)
+    avg_shap_values.append(importance_df.sort_values(by="avg", ascending=False).avg[:4].values)
+
+    display_top_features(features, complication)
+
+    return(features, avg_shap_values)
 
 
 def get_confidence_calibration(true, predict,bins):
@@ -153,8 +208,9 @@ def get_confidence_calibration(true, predict,bins):
         slope, intercept, _, _, _ = stats.linregress(tpr1, fpr1)
         slopes.append(slope)
         intercepts.append(intercept)
-
+    print("slopes")
     compute_Confidence_intervals(slopes, slope_true)
+    print("intercepts")
     compute_Confidence_intervals(intercepts, intercept_true)
 
     return(slope_true, intercept_true)

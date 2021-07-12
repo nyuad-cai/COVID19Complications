@@ -20,19 +20,21 @@ def search_models(training_i, x, train_columns):
         resulting with 6 final models per complication. The function below returns the 6 models for each respective training subset.
         """
 
-        baselines = ["Logistic Regression", "KNN", "LGBM", "MLP", "SVM"]
-        baselines_need_transforms = ["Logistics Regression", "MLP"]
+        baselines = ["Logistic Regression", "KNN", "LGBM", "SVM"]
+        baselines_need_transforms = ["Logistic Regression"]
         baselines_need_transforms2 = ["KNN", "SVM"]
 
         X = training_i[train_columns]
         Y = training_i[x]
 
-        n_iterations = 20 # number of iterations for random search
+        n_iterations = 30 # number of iterations for random search
         top_n = 2# select top n parameter sets
         all_ = {}
 
         # prepare indexes for stratified cross validation
         skf = StratifiedKFold(n_splits= 3, shuffle=True, random_state=0)
+#         skf = ShuffleSplit(n_splits= 3, random_state=0)
+
         skf.get_n_splits(X, Y)
 
         print ("Stratified K Fold into 3 splits ...")
@@ -51,6 +53,7 @@ def search_models(training_i, x, train_columns):
 
                 skf_split = skf.split(X, Y)
                 param_dictionary , model, X_  = choose_baseline(base, X)
+        
                 roc_in_k, pr_in_k, clf_in_k, train_in_k, val_in_k = ([] for i in range(5))
                 j = 0
 
@@ -63,14 +66,14 @@ def search_models(training_i, x, train_columns):
                     y_val = Y.iloc[val_index]
                     if (model in baselines_need_transforms):
 
-                        X_val = apply_transforms_MinMax_Scaler(X_val, X_train, train_columns)
-                        X_train = apply_transforms_MinMax_Scaler(X_val, X_train, train_columns)
+                        X_val,X_train = apply_transforms_MinMax_Scaler(X_val, X_train, train_columns)
+                     
 
                     if (model in baselines_need_transforms2):
 
-                        X_val = apply_transforms_STD_Scaler(X_val, X_train, train_columns)
-                        X_train = apply_transforms_STD_Scaler(X_val, X_train, train_columns)
-
+                        X_val,X_train = apply_transforms_STD_Scaler(X_val, X_train, train_columns)
+                
+        
                     clf = model(**param_dictionary)
 
                     clf = clf.fit(X_train, y_train)

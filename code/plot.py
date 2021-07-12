@@ -3,7 +3,7 @@ from sklearn.calibration import calibration_curve
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score,average_precision_score,roc_curve, precision_recall_curve
 
-def plot_calibration(label,true,predict, bins):
+def plot_calibration(label,true,predict, bins,set_name):
 
         """ This function plots the reliability curves based on the predictions"""
 
@@ -32,10 +32,10 @@ def plot_calibration(label,true,predict, bins):
 
 
 
-        plt.savefig('../plots/Calibration Curvefinal.pdf', format='pdf', dpi=1400,bbox_inches="tight")
+        plt.savefig('plots/Calibration Curvefinal'+set_name+'.pdf', format='pdf', dpi=1400,bbox_inches="tight")
         plt.show()
 
-def plot_roc(label,true,predict):
+def plot_roc(label,true,predict,set_name):
         """ This function plots the ROC curves based on the predictions"""
 
         colors=["#FF1F5B", "#00CD6C", "#009ADE", "#AF58BA", "#FFC61E", "#F28522", "#A0B1BA"]
@@ -61,13 +61,13 @@ def plot_roc(label,true,predict):
         plt.ylabel("True positive rate")
 
         plt.rcParams['figure.facecolor'] = 'none'
-        plt.legend(fontsize=8)
-        plt.savefig('../plots/Roc_curve_final.pdf', format='pdf', dpi=1400, bbox_inches="tight")
+#         plt.legend(fontsize=8)
+        plt.savefig('plots/Roc_curve_final'+set_name+'.pdf', format='pdf', dpi=1400, bbox_inches="tight")
 
         plt.show()
 
 
-def plot_PRC(label,true,predict):
+def plot_PRC(label,true,predict,set_name):
         """ This function plots the PR curves based on the predictions"""
 
         count = 0
@@ -92,6 +92,6 @@ def plot_PRC(label,true,predict):
         plt.rcParams['figure.facecolor'] = 'none'
         # plt.legend(loc = 1)
         # plt.legend(fontsize=8)
-        plt.savefig('../plots/PR_curve_final.pdf', format='pdf', dpi=1400, bbox_inches="tight")
+        plt.savefig('plots/PR_curve_final'+set_name+'.pdf', format='pdf', dpi=1400, bbox_inches="tight")
 
         plt.show()

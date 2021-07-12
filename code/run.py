@@ -18,20 +18,20 @@ except OSError as error:
 training= pd.read_csv("...")
 test= pd.read_csv("....")
 
-complications = ['Elevated_troponin', 'Elevated_d-dimer',  'Elevated_Amino','Elevated_IL6', 'SBI', 'AKI', 'ARDS']
+complications = ['SBI', 'AKI', 'ARDS']
 
 
 framework_train = apply_stratified_framework(training, complications)
 framework_test = apply_stratified_framework(test, complications)
 
 
-targets = get_targets(complications)
-train_columns = [x for x in training.columns if x not in targets]
+train_columns = ['Diastolic Blood Pressure_mean', 'Diastolic Blood Pressure_min', 'Oxygen Saturation_max', 'Oxygen Saturation_mean', 'Oxygen Saturation_min', 'Peripheral Pulse Rate_max', 'Peripheral Pulse Rate_mean', 'Peripheral Pulse Rate_min', 'Respiratory Rate_max', 'Respiratory Rate_mean', 'Respiratory Rate_min', 'Systolic Blood Pressure_max', 'Systolic Blood Pressure_mean', 'Systolic Blood Pressure_min', 'Temperature Axillary_max', 'Temperature Axillary_mean', 'Temperature Axillary_min', 'GCS_mean', 'GCS_min', 'GCS_max','GENDER','AGE', 'COUGH', 'FEVER', 'SOB', 'SORE_THROAT', 'RASH', 'BMI', 'DIABETES', 'HYPERTENSION', 'CKD', 'CANCER']
+
 
 models_all, trainsets, classifers = get_models(complications, framework_train, train_columns )
 
 true_ouctomes, predicted_ouctomes = get_results(framework_test, complications, models_all, train_columns)
 
-plot_roc(complications, true_ouctomes, predicted_ouctomes)
+plot_roc(complications, true_ouctomes, predicted_ouctomes,"testset")
 
-plot_PRC(complications, true_ouctomes, predicted_ouctomes)
+plot_PRC(complications, true_ouctomes, predicted_ouctomes,"testset")
