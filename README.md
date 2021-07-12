@@ -39,7 +39,7 @@ conda activate covid
 Overview
 --------
 The proposed system predicts the risk of developing each of the complications during the patient’s stay after 24hours of admission. The final output of our system is a vector of seven risk scores, corresponding to each of the investigated complications secondary to COVID-19.
-![Preprocessing highlights](overview_figure.jpg)
+![Preprocessing highlights](OverviewFigure.jpg)
 
 Repository Content
 ====================
