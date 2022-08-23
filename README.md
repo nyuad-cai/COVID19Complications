@@ -71,4 +71,15 @@ In this folder we include 2 notebooks:
 
 Reference
 =========
-For this work, please cite: ...... TO ADD
+For this work, please cite:
+```
+@article{ghosheh2022clinical,
+  title={Clinical prediction system of complications among patients with COVID-19: A development and validation retrospective multicentre study during first wave of the pandemic},
+  author={Ghosheh, Ghadeer O and Alamad, Bana and Yang, Kai-Wen and Syed, Faisil and Hayat, Nasir and Iqbal, Imran and Al Kindi, Fatima and Al Junaibi, Sara and Al Safi, Maha and Ali, Raghib and others},
+  journal={Intelligence-based medicine},
+  volume={6},
+  pages={100065},
+  year={2022},
+  publisher={Elsevier}
+}
+```
